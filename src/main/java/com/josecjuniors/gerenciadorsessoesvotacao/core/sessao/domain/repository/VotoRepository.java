@@ -6,4 +6,5 @@ import java.util.UUID;
 public interface VotoRepository {
     Voto save(Voto voto);
     boolean existsBySessaoVotacaoIdAndCpfAssociado(UUID sessaoId, String cpfAssociado);
+    long countBySessaoVotacaoIdAndVoto(UUID sessaoId, Boolean voto);
 }

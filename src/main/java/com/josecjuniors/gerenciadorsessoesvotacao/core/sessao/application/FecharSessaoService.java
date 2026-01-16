@@ -4,6 +4,7 @@ import com.josecjuniors.gerenciadorsessoesvotacao.core.sessao.domain.SessaoVotac
 import com.josecjuniors.gerenciadorsessoesvotacao.core.sessao.domain.StatusSessao;
 import com.josecjuniors.gerenciadorsessoesvotacao.core.sessao.domain.repository.SessaoVotacaoRepository;
 import com.josecjuniors.gerenciadorsessoesvotacao.core.sessao.domain.usecase.FecharSessaoUseCase;
+import com.josecjuniors.gerenciadorsessoesvotacao.core.sessao.domain.usecase.RegistrarResultadoSessaoUseCase;
 import com.josecjuniors.gerenciadorsessoesvotacao.core.sessao.domain.usecase.command.FecharSessaoCommand;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -17,9 +18,12 @@ public class FecharSessaoService implements FecharSessaoUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(FecharSessaoService.class);
     private final SessaoVotacaoRepository sessaoVotacaoRepository;
+    private final RegistrarResultadoSessaoUseCase registrarResultadoSessaoUseCase;
 
-    public FecharSessaoService(SessaoVotacaoRepository sessaoVotacaoRepository) {
+    public FecharSessaoService(SessaoVotacaoRepository sessaoVotacaoRepository,
+                               RegistrarResultadoSessaoUseCase registrarResultadoSessaoUseCase) {
         this.sessaoVotacaoRepository = sessaoVotacaoRepository;
+        this.registrarResultadoSessaoUseCase = registrarResultadoSessaoUseCase;
     }
 
     @Override
@@ -38,10 +42,9 @@ public class FecharSessaoService implements FecharSessaoUseCase {
 
         sessao.fecharSessao();
         sessaoVotacaoRepository.save(sessao);
+
+        registrarResultadoSessaoUseCase.execute(sessao);
         
         logger.info("Sessão {} fechada com sucesso.", command.sessaoId());
-        
-        // TODO: Aqui poderíamos disparar um evento de domínio "SessaoEncerrada" 
-        // para iniciar a contagem de votos ou notificar interessados.
     }
 }

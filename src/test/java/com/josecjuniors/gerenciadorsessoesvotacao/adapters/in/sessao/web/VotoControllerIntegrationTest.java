@@ -58,12 +58,14 @@ class VotoControllerIntegrationTest {
         // Arrange
         RegistrarVotoRequest request = new RegistrarVotoRequest("12345678901", true);
 
+        var sessaoId = UUID.randomUUID();
+
         // Act & Assert
-        mockMvc.perform(post("/v1/sessoes/{sessaoId}/votos", UUID.randomUUID())
+        mockMvc.perform(post("/v1/sessoes/{sessaoId}/votos", sessaoId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Sessão não encontrada com ID: " + UUID.randomUUID().toString().substring(0, 8) + "...")); // Validação parcial da mensagem ou apenas status
+                .andExpect(jsonPath("$.message").value("Sessão não encontrada com ID: " + sessaoId.toString()));
     }
 
     @Test
