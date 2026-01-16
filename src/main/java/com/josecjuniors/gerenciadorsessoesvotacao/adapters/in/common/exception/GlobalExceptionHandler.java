@@ -1,5 +1,7 @@
 package com.josecjuniors.gerenciadorsessoesvotacao.adapters.in.common.exception;
 
+import com.josecjuniors.gerenciadorsessoesvotacao.core.sessao.domain.exception.SessaoFechadaException;
+import com.josecjuniors.gerenciadorsessoesvotacao.core.sessao.domain.exception.VotoJaRealizadoException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +45,28 @@ public class GlobalExceptionHandler {
         response.put("message", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(VotoJaRealizadoException.class)
+    public ResponseEntity<Map<String, Object>> handleVotoJaRealizadoException(VotoJaRealizadoException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.CONFLICT.value());
+        response.put("error", "Conflito");
+        response.put("message", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(SessaoFechadaException.class)
+    public ResponseEntity<Map<String, Object>> handleSessaoFechadaException(SessaoFechadaException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("error", "Regra de Negócio");
+        response.put("message", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(Exception.class)
